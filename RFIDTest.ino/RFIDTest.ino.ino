@@ -5,16 +5,10 @@
 
 SoftwareSerial RFID(2, 3); // RX and TX
 
-
-/*
-** LDLASD
-** ASDASD
-*/ 
 int data;
 String result = "";
 String lastResult;
 char c;
-
 
 void setup()
 {
@@ -24,18 +18,13 @@ void setup()
  
 void loop()
 {
-
   checkUpdateAndPrint();
   if(somethingOnTop()) postID(lastResult);
-    
-   
 }
 
-void postID(String ID) {
-
-Serial.println(ID);
-  
-  
+void postID(String ID) 
+{
+  Serial.println(ID);
 }
 
 void checkUpdateAndPrint() {
@@ -61,4 +50,3 @@ boolean somethingOnTop() {
     Serial.println(value);
     return value > lightConstant;
 }
-
