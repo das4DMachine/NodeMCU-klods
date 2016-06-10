@@ -24,6 +24,7 @@ void loop()
 
 void postID(String ID) 
 {
+  ID = ID.substring(1, 13);
   Serial.println(ID);
 }
 
