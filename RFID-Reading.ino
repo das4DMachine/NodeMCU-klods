@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 #define lightPort A0
-#define lightConstant 180
+#define lightConstant 300 //Depending on the surroundings!
 
 SoftwareSerial RFID(2, 3); // RX and TX
 
@@ -48,5 +48,5 @@ void checkUpdateAndPrint() {
 boolean somethingOnTop() {
     int value = analogRead(lightPort);
     Serial.println(value);
-    return value > lightConstant;
+    return value < lightConstant;
 }
