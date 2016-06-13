@@ -1,7 +1,7 @@
 #include <SoftwareSerial.h>
 
 #define lightPort A0
-#define lightConstant 300 //Depending on the surroundings!
+#define lightConstant 250 //Depending on the surroundings!
 
 SoftwareSerial RFID(2, 3); // RX and TX
 
