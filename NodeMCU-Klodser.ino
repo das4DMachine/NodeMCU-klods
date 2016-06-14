@@ -3,10 +3,10 @@
 #include <ESP8266HTTPClient.h>
 
 #define lightPort A0
-#define lightConstant 250 //Depending on the surroundings!
+#define lightConstant 10 //Depending on the surroundings!
 #define updateRate 500
 
-const String ID = "4"; //SHould be assigned by reader initialisation can be preserved here
+const String ID = "3"; //SHould be assigned by reader initialisation can be preserved here
 
 double timestamp = 0;
 
@@ -19,7 +19,7 @@ SoftwareSerial RFID(2, 3); // RX and TX
 
 int data;
 String result = "";
-String lastResult;
+String lastReading;
 char c;
 
 HTTPClient http;
@@ -27,6 +27,7 @@ HTTPClient http;
 
 void setup()
 {
+  WiFi.persistent(false); //  Do this just to be on the safe side!!!!
   RFID.begin(9600);    // start serial to RFID reader
   Serial.begin(9600);  // start serial to PC 
   delay(10);
@@ -42,9 +43,20 @@ void loop()
   checkUpdateAndPrint();
  
   
-  if(somethingOnTop()) post("klods_id=" + ID + "&stacked_rfid=" + lastResult.substring(1, 13), "/3dserver/arduino/stack");
-  else post("klods_id=" + ID, "/3dserver/arduino/unstack");
+  if(somethingOnTop()) stack();
+  else unstack();
+}
 
+void stack() {
+  
+  post("klods_id=" + ID + "&stacked_rfid=" + lastReading.substring(1, 13), "/3dserver/arduino/stack");
+  
+}
+
+void unstack() {
+  
+  post("klods_id=" + ID, "/3dserver/arduino/unstack"); //send infor to server
+  lastReading = "";  
 }
 
 void checkUpdateAndPrint() {
@@ -59,7 +71,7 @@ void checkUpdateAndPrint() {
   if(c == 0x03) {
     Serial.println("reading: " + result);
     //we have a reading
-    if(result != "") lastResult = result; //Defencive string reading can be strange
+    if(result != "") lastReading = result; //Defencive string reading can be strange
     result = ""; 
     c = 0; // Reset so we dont end up here egain  
   }
@@ -68,7 +80,7 @@ void checkUpdateAndPrint() {
 
 boolean somethingOnTop() {
     int value = analogRead(lightPort);
-   // Serial.println(value);
+    //Serial.println(value);
     return value < lightConstant;
 }
 
