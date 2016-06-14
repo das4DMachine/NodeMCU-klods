@@ -6,10 +6,12 @@
 #define lightConstant 10 //Depending on the surroundings!
 #define updateRate 500
 
-const String ID = "3"; //SHould be assigned by reader initialisation can be preserved here
+#define RFIDSavingTimespan 1000
 
-double timestamp = 0;
+const String ID = "5"; //SHould be assigned by reader initialisation can be preserved here
 
+double updateTimestamp = 0;
+double readingTimestamp   = 0;
 //WiFi informationer
 const char* ssid     = "Mark's iPhone";
 const char* password = "LOLl0l69";
@@ -23,6 +25,7 @@ String lastReading;
 char c;
 
 HTTPClient http;
+
 
 
 void setup()
@@ -56,7 +59,11 @@ void stack() {
 void unstack() {
   
   post("klods_id=" + ID, "/3dserver/arduino/unstack"); //send infor to server
-  lastReading = "";  
+
+  if(millis() - readingTimestamp > RFIDSavingTimespan) {
+    lastReading = ""; 
+  }
+
 }
 
 void checkUpdateAndPrint() {
@@ -73,6 +80,7 @@ void checkUpdateAndPrint() {
     //we have a reading
     if(result != "") lastReading = result; //Defencive string reading can be strange
     result = ""; 
+    readingTimestamp = millis();
     c = 0; // Reset so we dont end up here egain  
   }
 
@@ -139,8 +147,8 @@ void wifiCheck()
 
 void post(String payload, String url) {
 
-    if( millis() - timestamp > updateRate) {
-      timestamp = millis();
+    if( millis() - updateTimestamp > updateRate) {
+      updateTimestamp = millis();
   
       Serial.println("[HTTP] begin...");
       // configure traged server and url
